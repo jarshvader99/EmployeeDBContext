@@ -10,18 +10,28 @@ namespace EmployeeService.Controllers
 {
     public class EmployeesController : ApiController
     {
-        public IEnumerable<Employee> Get()
+        public HttpResponseMessage Get()
         {
             using (EmployeeDBContext dbContext = new EmployeeDBContext())
             {
-                return dbContext.Employees.ToList();
+                var Employees = dbContext.Employees.ToList();
+                return Request.CreateResponse(HttpStatusCode.OK, Employees);
             }
         }
-        public Employee Get(int id)
+        public HttpResponseMessage Get(int id)
         {
             using (EmployeeDBContext dbContext = new EmployeeDBContext())
             {
-                return dbContext.Employees.FirstOrDefault(e => e.ID == id);
+                var entity = dbContext.Employees.FirstOrDefault(e => e.ID == id);
+                if (entity != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, entity);
+                }
+                else
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.NotFound,
+                        "Employee with ID " + id.ToString() + " not found");
+                }
             }
         }
     }
