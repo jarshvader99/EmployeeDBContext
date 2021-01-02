@@ -7,6 +7,9 @@ using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json.Serialization;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
+using WebApiContrib.Formatting.Jsonp;
+using System.Web.Http.Cors;
+
 public class CustomJsonFormatter : JsonMediaTypeFormatter
 {
     public CustomJsonFormatter()
@@ -39,7 +42,9 @@ namespace EmployeeService
                 defaults: new { id = RouteParameter.Optional }
             );
 
-            config.Formatters.Add(new CustomJsonFormatter());
+            EnableCorsAttribute cors = new EnableCorsAttribute("*", "*", "*");
+            config.EnableCors(cors);
+
         }
     }
 }
