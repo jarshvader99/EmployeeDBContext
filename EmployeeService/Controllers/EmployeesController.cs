@@ -10,7 +10,8 @@ namespace EmployeeService.Controllers
 {
     public class EmployeesController : ApiController
     {
-        public HttpResponseMessage Get()
+        [HttpGet]
+        public HttpResponseMessage LoadAllEmployees()
         {
             using (EmployeeDBContext dbContext = new EmployeeDBContext())
             {
@@ -18,7 +19,8 @@ namespace EmployeeService.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, Employees);
             }
         }
-        public HttpResponseMessage Get(int id)
+        [HttpGet]
+        public HttpResponseMessage LoadEmployee(int id)
         {
             using (EmployeeDBContext dbContext = new EmployeeDBContext())
             {
@@ -32,6 +34,15 @@ namespace EmployeeService.Controllers
                     return Request.CreateErrorResponse(HttpStatusCode.NotFound,
                         "Employee with ID " + id.ToString() + " not found");
                 }
+            }
+        }
+        [HttpGet]
+        public HttpResponseMessage LoadAllMaleEmployees()
+        {
+            using (EmployeeDBContext dbContext = new EmployeeDBContext())
+            {
+                var Employees = dbContext.Employees.Where(x => x.Gender == "Male").ToList();
+                return Request.CreateResponse(HttpStatusCode.OK, Employees);
             }
         }
         public HttpResponseMessage Post([FromBody] Employee employee)
