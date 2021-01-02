@@ -81,5 +81,30 @@ namespace EmployeeService.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
             }
         }
+        public HttpResponseMessage Delete(int id)
+        {
+            try
+            {
+                using (EmployeeDBContext dbContext = new EmployeeDBContext())
+                {
+                    var entity = dbContext.Employees.FirstOrDefault(e => e.ID == id);
+                    if (entity == null)
+                    {
+                        return Request.CreateErrorResponse(HttpStatusCode.NotFound,
+                            "Employee with Id = " + id.ToString() + " not found to delete");
+                    }
+                    else
+                    {
+                        dbContext.Employees.Remove(entity);
+                        dbContext.SaveChanges();
+                        return Request.CreateResponse(HttpStatusCode.OK);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
+        }
     }
 }
