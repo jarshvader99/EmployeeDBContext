@@ -37,12 +37,28 @@ namespace EmployeeService.Controllers
             }
         }
         [HttpGet]
-        public HttpResponseMessage LoadAllMaleEmployees()
+        public HttpResponseMessage LoadEmployeesByGender(string gender)
         {
             using (EmployeeDBContext dbContext = new EmployeeDBContext())
             {
-                var Employees = dbContext.Employees.Where(x => x.Gender == "Male").ToList();
-                return Request.CreateResponse(HttpStatusCode.OK, Employees);
+                try
+                {
+                    if(gender.Equals("all") || gender.Equals("All"))
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                        dbContext.Employees.ToList());
+                    }
+                    else
+                    {
+                        var Employees = dbContext.Employees.Where(x => x.Gender == gender).ToList();
+                        return Request.CreateResponse(HttpStatusCode.OK, Employees);
+                    }
+                }
+                catch
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest,
+                        "Value for gender must be Male, Female or All. " + gender + " is invalid.");
+                }
             }
         }
         public HttpResponseMessage Post([FromBody] Employee employee)
@@ -64,7 +80,7 @@ namespace EmployeeService.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
             }
         }
-        public HttpResponseMessage Put(int id, [FromBody] Employee employee)
+        public HttpResponseMessage Put([FromBody]int id, [FromUri]Employee employee)
         {
             try
             {
